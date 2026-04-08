@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JoeSync — Automation Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#080808;--black2:#0e0e0e;--black3:#141414;
+  --gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#7a6230;
+  --gold-faint:rgba(201,168,76,0.08);
+  --white:#f5f0e8;--white-dim:rgba(245,240,232,0.55);
+  --white-faint:rgba(245,240,232,0.12);--border:rgba(201,168,76,0.15);
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Outfit',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
+.cursor{position:fixed;width:10px;height:10px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(201,168,76,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:24px 60px;border-bottom:1px solid transparent;transition:all .4s}
+nav.scrolled{background:rgba(8,8,8,0.94);backdrop-filter:blur(12px);border-color:var(--border);padding:16px 60px}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--gold);letter-spacing:.05em;text-decoration:none}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--white-dim);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--black);background:var(--gold);padding:10px 22px;text-decoration:none;transition:all .3s}
+.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 60px 80px;position:relative;overflow:hidden}
+.hero-bg-line{position:absolute;top:0;bottom:0;width:1px;background:var(--border)}
+.hero-bg-line:nth-child(1){left:60px}.hero-bg-line:nth-child(2){left:33%}.hero-bg-line:nth-child(3){left:66%}.hero-bg-line:nth-child(4){right:60px}
+.hero-tag{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:32px;display:flex;align-items:center;gap:12px;animation:fadeUp .8s ease both}
+.hero-tag::before{content:'';width:32px;height:1px;background:var(--gold)}
+.hero-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(3.2rem,7.5vw,6.5rem);font-weight:300;line-height:1.05;letter-spacing:-.02em;margin-bottom:40px;animation:fadeUp .9s .1s ease both}
+.hero-headline em{font-style:italic;color:var(--gold)}
+.hero-headline strong{font-weight:700}
+.hero-sub{max-width:520px;font-size:1rem;color:var(--white-dim);line-height:1.8;margin-bottom:56px;animation:fadeUp 1s .2s ease both}
+.hero-actions{display:flex;gap:20px;flex-wrap:wrap;animation:fadeUp 1s .3s ease both}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--black);padding:16px 36px;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;text-decoration:none;transition:all .3s}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,168,76,.25)}
+.btn-secondary{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);color:var(--white-dim);padding:16px 36px;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .3s}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.hero-scroll{position:absolute;bottom:40px;left:60px;display:flex;align-items:center;gap:12px;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);animation:fadeUp 1s .5s ease both}
+.scroll-line{width:1px;height:48px;background:var(--gold-dim);animation:scrollPulse 2s infinite}
+
+/* MARQUEE */
+.marquee-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;overflow:hidden;background:var(--gold-faint)}
+.marquee-track{display:flex;animation:marquee 28s linear infinite;width:max-content}
+.marquee-item{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);padding:0 40px;white-space:nowrap}
+.marquee-dot{color:var(--gold);margin-right:40px}
+
+/* SECTIONS */
+section{padding:120px 60px;position:relative}
+.section-tag{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.section-tag::before{content:'';width:24px;height:1px;background:var(--gold)}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:300;line-height:1.1;letter-spacing:-.02em;margin-bottom:20px}
+.section-title em{font-style:italic;color:var(--gold)}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border);margin-top:70px;border:1px solid var(--border)}
+.service-card{background:var(--black2);padding:48px 40px;position:relative;overflow:hidden;transition:background .3s}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.service-card:hover{background:var(--black3)}
+.service-card:hover::before{transform:scaleX(1)}
+.service-number{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(201,168,76,.1);line-height:1;margin-bottom:24px}
+.service-title{font-size:1.05rem;font-weight:500;color:var(--white);margin-bottom:14px}
+.service-desc{font-size:.85rem;color:var(--white-dim);line-height:1.75}
+.service-tools{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px}
+.tool-tag{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);border:1px solid rgba(201,168,76,.2);padding:4px 10px}
+
+/* PROCESS */
+.how-section{background:var(--black2)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;margin-top:70px}
+.step{position:relative;padding-left:28px}
+.step::before{content:'';position:absolute;left:0;top:8px;width:1px;height:calc(100% + 40px);background:var(--border)}
+.step:last-child::before{display:none}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:.75rem;color:var(--gold);letter-spacing:.2em;margin-bottom:16px}
+.step-title{font-size:1rem;font-weight:500;margin-bottom:12px}
+.step-desc{font-size:.85rem;color:var(--white-dim);line-height:1.75}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:70px}
+.project-card{border:1px solid var(--border);padding:40px;position:relative;overflow:hidden;transition:all .3s;background:var(--black2)}
+.project-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.project-industry{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.project-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:16px;line-height:1.2}
+.project-desc{font-size:.85rem;color:var(--white-dim);line-height:1.75;margin-bottom:24px}
+.project-results{display:flex;flex-direction:column;gap:10px}
+.result-item{display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--white-dim)}
+.result-item::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;flex-shrink:0}
+.project-link{display:inline-flex;align-items:center;gap:8px;margin-top:24px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);padding-bottom:4px;transition:all .3s}
+.project-link:hover{color:var(--gold-light);border-color:var(--gold-light)}
+
+/* STACK */
+.stack-section{background:var(--black2)}
+.stack-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:56px}
+.stack-item{border:1px solid var(--border);padding:14px 22px;font-size:.78rem;letter-spacing:.08em;color:var(--white-dim);transition:all .3s}
+.stack-item:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-faint)}
+
+/* FOUNDER */
+.founder-wrap{display:grid;grid-template-columns:420px 1fr;gap:0;align-items:stretch;min-height:600px}
+.founder-body{font-size:.92rem;color:var(--white-dim);line-height:1.85;margin-bottom:28px}
+.founder-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--gold);margin-bottom:4px}
+.founder-role{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--white-dim)}
+.founder-visual{position:relative;overflow:hidden;min-height:600px}
+.founder-photo-portrait{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:brightness(0.92) contrast(1.05)}
+.founder-photo-overlay{position:absolute;top:0;right:0;width:80px;height:100%;background:linear-gradient(to left,var(--black),transparent);z-index:2}
+.founder-gold-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);z-index:3}
+.founder-text{padding:80px 70px;display:flex;flex-direction:column;justify-content:center}
+
+/* CTA */
+.cta-section{text-align:center;background:linear-gradient(135deg,var(--black) 0%,#0d0b06 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cta-section .section-title{margin:0 auto 20px;max-width:700px}
+.cta-sub{font-size:.95rem;color:var(--white-dim);max-width:480px;margin:0 auto 48px;line-height:1.8}
+.cta-actions{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.cta-note{margin-top:28px;font-size:.72rem;color:var(--gold-dim);letter-spacing:.1em}
+
+/* FOOTER */
+footer{padding:60px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:24px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--gold)}
+.footer-links{display:flex;gap:28px;list-style:none}
+.footer-links a{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--white-dim);text-decoration:none;transition:color .3s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{font-size:.7rem;color:var(--gold-dim);letter-spacing:.08em}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes scrollPulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  nav{padding:20px 24px}.nav-links,.nav-cta{display:none}
+  .hero{padding:100px 24px 60px}.hero-bg-line,.hero-scroll{display:none}
+  section{padding:80px 24px}
+  .founder-wrap{grid-template-columns:1fr}.founder-visual{margin-bottom:40px}
+  footer{padding:40px 24px;flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">JoeSync</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#founder">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="https://wa.me/2349168130602" target="_blank" class="nav-cta">WhatsApp Us</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg-line"></div><div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div><div class="hero-bg-line"></div>
+  <div class="hero-tag">Automation Agency · Nigeria</div>
+  <h1 class="hero-headline">
+    Your team should<br>be closing deals,<br>
+    <em>not pushing</em><br><strong>spreadsheets.</strong>
+  </h1>
+  <p class="hero-sub">JoeSync eliminates manual admin work for growing businesses — recruitment agencies, CRM-heavy teams, and operations leaders — using intelligent automation built on n8n, Make.com, and AI.</p>
+  <div class="hero-actions">
+    <a href="https://wa.me/2349168130602" target="_blank" class="btn-primary">Start on WhatsApp →</a>
+    <a href="https://www.instagram.com/joes.ync" target="_blank" class="btn-secondary">Follow on Instagram</a>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div>Scroll</div>
+</section>
+
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Recruitment Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">CRM Workflows</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI-Powered Outreach</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">WhatsApp Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Lead Pipelines</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Content Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">n8n · Make.com · AI</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Recruitment Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">CRM Workflows</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI-Powered Outreach</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">WhatsApp Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Lead Pipelines</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Content Automation</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">n8n · Make.com · AI</span><span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<section id="services">
+  <div class="section-tag">What We Build</div>
+  <h2 class="section-title reveal">End-to-end automation<br>for <em>every bottleneck</em></h2>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-number">01</div>
+      <div class="service-title">Recruitment Automation</div>
+      <div class="service-desc">Application sorting, candidate follow-ups, interview scheduling, ATS updates — all automated. Your recruiters focus only on placements.</div>
+      <div class="service-tools"><span class="tool-tag">n8n</span><span class="tool-tag">Make.com</span><span class="tool-tag">Apollo.io</span><span class="tool-tag">HubSpot</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-number">02</div>
+      <div class="service-title">CRM Workflow Automation</div>
+      <div class="service-desc">Automated lead entry, pipeline updates, follow-up reminders, and client status reports. Your CRM runs itself.</div>
+      <div class="service-tools"><span class="tool-tag">HubSpot</span><span class="tool-tag">Salesforce</span><span class="tool-tag">Zoho</span><span class="tool-tag">Monday.com</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-number">03</div>
+      <div class="service-title">AI-Powered Outreach</div>
+      <div class="service-desc">Intelligent WhatsApp and email sequences that personalise themselves per contact — proactively engaging leads while you sleep.</div>
+      <div class="service-tools"><span class="tool-tag">OpenAI</span><span class="tool-tag">n8n</span><span class="tool-tag">WhatsApp API</span><span class="tool-tag">Gmail</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-number">04</div>
+      <div class="service-title">Lead Generation Pipelines</div>
+      <div class="service-desc">Automated lead scraping, enrichment, scoring, and routing into your CRM — built with Apify, Apollo, and Hunter.</div>
+      <div class="service-tools"><span class="tool-tag">Apify</span><span class="tool-tag">Apollo.io</span><span class="tool-tag">Hunter.io</span><span class="tool-tag">Supabase</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-number">05</div>
+      <div class="service-title">Content Publishing Automation</div>
+      <div class="service-desc">AI monitors your industry, rewrites content in your voice, and publishes to LinkedIn and X — consistently, automatically.</div>
+      <div class="service-tools"><span class="tool-tag">RSS</span><span class="tool-tag">OpenAI</span><span class="tool-tag">LinkedIn</span><span class="tool-tag">n8n</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-number">06</div>
+      <div class="service-title">Data & Operations Sync</div>
+      <div class="service-desc">Cross-platform data syncing, automated reporting, and internal notifications — zero manual input, zero human error.</div>
+      <div class="service-tools"><span class="tool-tag">Supabase</span><span class="tool-tag">Google Sheets</span><span class="tool-tag">Make.com</span><span class="tool-tag">Airtable</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="how-section" id="process">
+  <div class="section-tag">The Process</div>
+  <h2 class="section-title reveal">Simple. Clean. <em>Yours.</em></h2>
+  <p class="reveal" style="color:var(--white-dim);max-width:500px;line-height:1.8;font-size:.92rem">No jargon. No complicated systems. No dependency on us after handover.</p>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">Step 01</div>
+      <div class="step-title">Free Workflow Audit</div>
+      <div class="step-desc">We map your current process and identify the 3 highest-impact tasks to automate first. No cost. No commitment.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">Step 02</div>
+      <div class="step-title">Build & Validate</div>
+      <div class="step-desc">We build your automation, test it against real scenarios, and validate every execution path before handover.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">Step 03</div>
+      <div class="step-title">Handover & Train</div>
+      <div class="step-desc">Full documentation. Your team runs it independently — no monthly retainer, no dependency.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">Step 04</div>
+      <div class="step-title">Results</div>
+      <div class="step-desc">Hours saved weekly. Team refocused on high-value work. Measurable ROI from week one.</div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="section-tag">Live Projects</div>
+  <h2 class="section-title reveal">Built. Tested. <em>Validated.</em></h2>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-industry">AI Sales Automation</div>
+      <div class="project-title">AI Agent + WhatsApp Outreach System</div>
+      <div class="project-desc">A 24/7 AI sales assistant that pulls contacts from Google Sheets, generates personalised messages using OpenAI, and sends them automatically via WhatsApp — with memory and multi-step logic.</div>
+      <div class="project-results">
+        <div class="result-item">WhatsApp open rates: 80–95% vs email's 20%</div>
+        <div class="result-item">Cold leads re-engaged from dead spreadsheets</div>
+        <div class="result-item">Replaces VA + follow-up assistant entirely</div>
+        <div class="result-item">5+ stage validated execution flow</div>
+      </div>
+      <a href="https://www.notion.so/30a12f26919780ac8a12c812f0cac005" target="_blank" class="project-link">View Project →</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-industry">CRM + Email Automation</div>
+      <div class="project-title">AI-Powered Lead Processing & Follow-Up Engine</div>
+      <div class="project-desc">Pulls leads from Google Sheets → AI personalises each message → conditional logic segments contacts → HubSpot updated automatically → personalised emails sent. Zero human involvement.</div>
+      <div class="project-results">
+        <div class="result-item">20–40% lead leakage eliminated</div>
+        <div class="result-item">Every lead captured, logged, and contacted</div>
+        <div class="result-item">Sales team freed from data entry entirely</div>
+        <div class="result-item">6–8 stage workflow, fully validated</div>
+      </div>
+      <a href="https://www.notion.so/30a12f26919780edb048fe1cc3d46283" target="_blank" class="project-link">View Project →</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-industry">Content Automation</div>
+      <div class="project-title">RSS → AI → Multi-Platform Publishing Engine</div>
+      <div class="project-desc">Monitors industry RSS feeds, filters content by quality and relevance using AI, rewrites it in your brand voice, and auto-publishes to LinkedIn and X — storing everything for tracking.</div>
+      <div class="project-results">
+        <div class="result-item">Daily branded content — zero manual effort</div>
+        <div class="result-item">Low-quality content auto-filtered and archived</div>
+        <div class="result-item">Consistent authority and visibility on autopilot</div>
+        <div class="result-item">Integrates LinkedIn, X, Google Sheets</div>
+      </div>
+      <a href="https://www.notion.so/30a12f26919780439e61f2761f2be73e" target="_blank" class="project-link">View Project →</a>
+    </div>
+
+  </div>
+</section>
+
+<section class="stack-section">
+  <div class="section-tag">Our Stack</div>
+  <h2 class="section-title reveal">Tools we <em>master.</em></h2>
+  <div class="stack-grid reveal">
+    <div class="stack-item">n8n</div><div class="stack-item">Make.com</div>
+    <div class="stack-item">Apollo.io</div><div class="stack-item">Hunter.io</div>
+    <div class="stack-item">Apify</div><div class="stack-item">Supabase</div>
+    <div class="stack-item">HubSpot</div><div class="stack-item">Salesforce</div>
+    <div class="stack-item">Zoho CRM</div><div class="stack-item">Monday.com</div>
+    <div class="stack-item">Airtable</div><div class="stack-item">Google Sheets</div>
+    <div class="stack-item">Ollama</div><div class="stack-item">OpenAI API</div>
+    <div class="stack-item">Claude API</div><div class="stack-item">WhatsApp API</div>
+    <div class="stack-item">Gmail API</div><div class="stack-item">pgvector</div>
+  </div>
+</section>
+
+<section id="founder">
+  <div class="founder-wrap">
+    <div class="founder-visual">
+      <img id="founderImg" class="founder-photo-portrait" src="" alt="Njiraan Jonathan Sakanwi">
+      <div class="founder-photo-overlay"></div>
+      <div class="founder-gold-bar"></div>
+    </div>
+    <div class="founder-text">
+      <div class="section-tag">The Founder</div>
+      <h2 class="section-title reveal">Built by someone who<br><em>actually builds.</em></h2>
+      <p class="founder-body reveal">I'm Njiraan Jonathan Sakanwi — automation specialist, electrical engineering student at FUPRE, and founder of JoeSync. I started this agency because I kept seeing growing businesses lose hours every week to work that machines should be doing.</p>
+      <p class="founder-body reveal">I don't just consult. I design and build the systems myself — end to end — with structured architecture, conditional logic, and multi-platform integration. Every workflow I deliver is demo-validated before handover.</p>
+      <div class="reveal">
+        <div class="founder-name">Njiraan Jonathan Sakanwi</div>
+        <div class="founder-role">Founder · Automation Specialist · JoeSync</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contact">
+  <div class="section-tag" style="justify-content:center">Get Started</div>
+  <h2 class="section-title reveal">Ready to stop doing<br><em>work that doesn't need you?</em></h2>
+  <p class="cta-sub reveal">Message us on WhatsApp or Instagram. We'll map your workflow, identify what to automate first, and show you exactly what's possible — for free.</p>
+  <div class="cta-actions reveal">
+    <a href="https://wa.me/2349168130602" target="_blank" class="btn-primary">WhatsApp: +234 916 813 0602</a>
+    <a href="https://www.instagram.com/joes.ync" target="_blank" class="btn-secondary">DM on Instagram</a>
+  </div>
+  <p class="cta-note reveal">No retainers. No jargon. Just results.</p>
+</section>
+
+<footer>
+  <div class="footer-logo">JoeSync</div>
+  <ul class="footer-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#founder">About</a></li>
+    <li><a href="https://wa.me/2349168130602" target="_blank">WhatsApp</a></li>
+    <li><a href="https://www.instagram.com/joes.ync" target="_blank">Instagram</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 JoeSync · Automation Agency · Nigeria</div>
+</footer>
+
+<script>
+document.getElementById('founderImg').src = 'founder.jpg';
+
+// Cursor
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='6px';cursor.style.height='6px';ring.style.width='52px';ring.style.height='52px'});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px'});
+});
+
+// Nav
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60));
+
+// Reveal
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
